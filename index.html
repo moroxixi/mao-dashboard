@@ -3,159 +3,158 @@
 <head>
   <base target="_top">
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
     .tab-active { border-bottom: 3px solid #4f46e5; color: #4f46e5; font-weight: 700; }
-    .btn-nav { @apply bg-white p-3 rounded-xl shadow-sm border border-slate-200 active:scale-95 transition-all; }
   </style>
 </head>
 <body class="bg-slate-50 text-slate-900 pb-10">
   <div class="max-w-md mx-auto px-4 pt-6">
-    
-    <div class="mb-6">
-      <div class="flex justify-between items-center mb-4">
-        <h1 class="text-xl font-bold italic text-indigo-900">MAO Dashboard</h1>
-        <button onclick="refreshData()" class="text-indigo-600 font-bold text-sm">Refresh</button>
-      </div>
-      
-      <div class="flex items-center justify-between bg-white p-2 rounded-2xl shadow-sm border border-slate-100">
-        <button onclick="changeDate(-1)" class="p-2 hover:bg-slate-50 rounded-lg text-indigo-600">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-        <div class="text-center">
-          <p id="current-date" class="font-bold text-sm text-slate-800 tracking-tight">Memuat...</p>
-        </div>
-        <button onclick="changeDate(1)" class="p-2 hover:bg-slate-50 rounded-lg text-indigo-600">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-      </div>
+
+    <div class="mb-6 text-center">
+      <h1 class="text-2xl font-black text-indigo-900 tracking-tighter">MAO DASHBOARD</h1>
+      <p class="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em]">Sales & Inventory System</p>
     </div>
 
-    <div class="bg-indigo-600 rounded-3xl p-6 text-white shadow-xl shadow-indigo-100 mb-6">
-      <p class="text-indigo-100 text-[10px] font-bold uppercase tracking-widest">Total Omset</p>
-      <h2 id="grand-total" class="text-3xl font-bold mt-1">Rp 0</h2>
+    <div class="flex items-center justify-between bg-white p-2 rounded-2xl shadow-sm border border-slate-100 mb-6">
+      <button onclick="changeDate(-1)" class="p-2 hover:bg-indigo-50 rounded-xl text-indigo-600 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <div class="text-center">
+        <span id="current-date" class="font-bold text-slate-700 text-sm block">Memuat...</span>
+      </div>
+      <button onclick="changeDate(1)" class="p-2 hover:bg-indigo-50 rounded-xl text-indigo-600 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
     </div>
 
-    <div class="flex border-b border-slate-200 mb-6 bg-white rounded-t-2xl">
-      <button id="tab-omset-btn" onclick="switchTab('omset')" class="flex-1 py-4 text-sm tab-active">Omset</button>
-      <button id="tab-detail-btn" onclick="switchTab('detail')" class="flex-1 py-4 text-sm text-slate-400">Stok</button>
+    <div class="bg-indigo-600 rounded-[2rem] p-6 text-white shadow-xl shadow-indigo-100 mb-8 relative overflow-hidden">
+      <div class="relative z-10">
+        <p class="text-indigo-200 text-[10px] font-bold uppercase tracking-widest mb-1">Total Omset Gabungan</p>
+        <h2 id="grand-total" class="text-3xl font-bold tracking-tight">Rp 0</h2>
+      </div>
+      <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-indigo-500 rounded-full opacity-20"></div>
+    </div>
+
+    <div class="flex border-b border-slate-200 mb-6">
+      <button onclick="switchTab('omset')" id="tab-omset" class="flex-1 py-3 text-xs font-bold tab-active uppercase tracking-wider">Omset</button>
+      <button onclick="switchTab('detail')" id="tab-detail" class="flex-1 py-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Detail Stok</button>
     </div>
 
     <div id="view-omset" class="space-y-3"></div>
     <div id="view-detail" class="hidden space-y-4"></div>
 
+    <button onclick="refreshData()" class="w-full mt-8 py-4 bg-white border-2 border-indigo-100 text-indigo-600 rounded-2xl font-bold text-sm hover:bg-indigo-50 transition-all">
+      Perbarui Data
+    </button>
   </div>
 
   <script>
-    // --- KONFIGURASI ---
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwaezgcMKGAdN3q-sjV5Km0yI0DtCur2C8JJ2nfQVT-uLsMZL3xeF7CRIx0ny6ZlsUZ/exec"; 
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwVs6ULAJAXxKs_SP6oHndR0tPoBKUeCt0nRaGvkQmZZSLX3hpGM2_X9VIysDAUnQs/exec'; // GANTI INI
     let currentViewingDate = new Date().getDate();
 
-    function formatCurrency(num) {
-      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(num);
+    function formatCurrency(val) {
+      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);
     }
 
-    function changeDate(step) {
-      currentViewingDate += step;
+    function switchTab(tab) {
+      const omsetV = document.getElementById('view-omset');
+      const detailV = document.getElementById('view-detail');
+      const tabO = document.getElementById('tab-omset');
+      const tabD = document.getElementById('tab-detail');
+
+      if(tab === 'omset') {
+        omsetV.classList.remove('hidden'); detailV.classList.add('hidden');
+        tabO.classList.add('tab-active'); tabO.classList.remove('text-slate-400');
+        tabD.classList.remove('tab-active'); tabD.classList.add('text-slate-400');
+      } else {
+        omsetV.classList.add('hidden'); detailV.classList.remove('hidden');
+        tabD.classList.add('tab-active'); tabD.classList.remove('text-slate-400');
+        tabO.classList.remove('tab-active'); tabO.classList.add('text-slate-400');
+      }
+    }
+
+    function changeDate(offset) {
+      currentViewingDate += offset;
       if (currentViewingDate < 1) currentViewingDate = 1;
       if (currentViewingDate > 31) currentViewingDate = 31;
       loadData(currentViewingDate);
     }
 
-    function refreshData() {
-      loadData(currentViewingDate);
-    }
+    function refreshData() { loadData(currentViewingDate); }
 
-    function switchTab(tab) {
-      const vO = document.getElementById('view-omset');
-      const vD = document.getElementById('view-detail');
-      const bO = document.getElementById('tab-omset-btn');
-      const bD = document.getElementById('tab-detail-btn');
-      if (tab === 'omset') {
-        vO.classList.remove('hidden'); vD.classList.add('hidden');
-        bO.className = 'flex-1 py-4 text-sm tab-active'; bD.className = 'flex-1 py-4 text-sm text-slate-400';
-      } else {
-        vO.classList.add('hidden'); vD.classList.remove('hidden');
-        bO.className = 'flex-1 py-4 text-sm text-slate-400'; bD.className = 'flex-1 py-4 text-sm tab-active';
-      }
+    function renderList(title, dataObj) {
+      if (!dataObj) return '';
+      // Filter hanya item yang jumlahnya lebih dari 0
+      const items = Object.entries(dataObj).filter(([_, v]) => v > 0);
+      if (items.length === 0) return '';
+
+      return `
+        <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 mb-4">
+          <h3 class="font-bold text-indigo-900 mb-3 text-xs uppercase tracking-widest border-b pb-2">${title}</h3>
+          <div class="grid grid-cols-2 gap-x-4 gap-y-2">
+            ${items.map(([k, v]) => `
+              <div class="flex justify-between items-center text-[11px] border-b border-slate-50 pb-1">
+                <span class="text-slate-500 font-medium">${k}</span>
+                <span class="font-bold text-slate-800">${v}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>`;
     }
 
     function loadData(date) {
-      const dateDisplay = document.getElementById('current-date');
-      dateDisplay.innerText = "Mencari data...";
-      
+      const omsetContainer = document.getElementById('view-omset');
+      const detailContainer = document.getElementById('view-detail');
+      document.getElementById('current-date').innerText = "Sinkronisasi...";
+
       fetch(`${WEB_APP_URL}?date=${date}`)
         .then(res => res.json())
         .then(data => {
           if (data.error) {
-            document.getElementById('view-omset').innerHTML = `<div class="bg-red-50 p-6 rounded-2xl text-red-600 text-center text-xs font-bold">${data.error}</div>`;
-            dateDisplay.innerText = "Data tidak ada";
+            omsetContainer.innerHTML = `<div class="p-8 text-center bg-red-50 rounded-3xl text-red-500 text-xs font-bold">${data.error}</div>`;
             return;
           }
+          document.getElementById('current-date').innerText = data.date;
 
-          dateDisplay.innerText = data.date;
-          
           // Render Omset
-          const omsetContainer = document.getElementById('view-omset');
           omsetContainer.innerHTML = '';
           const outlets = [
-            {n:"RS Waled", v:data.omset.RSWaled}, {n:"Leuweung Gajah", v:data.omset.LeuweungGajah},
-            {n:"Babakan", v:data.omset.Babakan}, {n:"Tempura", v:data.omset.Tempura},
-            {n:"Serba Mercon", v:data.omset.SerbaMercon}
+            { n: "RS Waled", v: data.omset.RSWaled },
+            { n: "Leuweung Gajah", v: data.omset.LeuweungGajah },
+            { n: "Babakan", v: data.omset.Babakan },
+            { n: "Tempura", v: data.omset.Tempura }
           ];
           
           let total = 0;
           outlets.forEach(o => {
             total += (o.v || 0);
             omsetContainer.innerHTML += `
-              <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex justify-between items-center">
-                <span class="font-semibold text-slate-600 text-sm">${o.n}</span>
-                <span class="font-bold text-slate-900">${formatCurrency(o.v || 0)}</span>
+              <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex justify-between items-center transition-all active:scale-95">
+                <div class="flex items-center gap-3">
+                  <div class="w-2 h-2 rounded-full bg-indigo-400"></div>
+                  <span class="font-bold text-slate-700 text-sm">${o.n}</span>
+                </div>
+                <span class="font-black text-indigo-900 text-sm">${formatCurrency(o.v || 0)}</span>
               </div>`;
           });
           document.getElementById('grand-total').innerText = formatCurrency(total);
 
-          // Render Detail Stok
-          const detailContainer = document.getElementById('view-detail');
-          detailContainer.innerHTML = renderGrid("Wonton - Leuweung", data.produk.leuweung) + 
-                                     renderGrid("Wonton - Babakan", data.produk.babakan) +
-                                     renderTempura(data.produk.tempura);
+          // Render Detail
+          detailContainer.innerHTML = 
+            renderList("Wonton - Leuweung Gajah", data.produk.leuweung) +
+            renderList("Wonton - Babakan", data.produk.babakan) +
+            renderList("Stok Tempura", data.produk.tempura);
+        })
+        .catch(() => {
+          document.getElementById('current-date').innerText = "Koneksi Terputus";
         });
     }
 
-    function renderGrid(title, obj) {
-      const items = [
-        {l:'Wonton', v:obj.wonton}, {l:'Mie', v:obj.mie}, {l:'Baso', v:obj.baso}, 
-        {l:'Creamy', v:obj.creamy}, {l:'Cirawang', v:obj.cirawang}, 
-        {l:'Balungan', v:obj.balungan}, {l:'Pilus', v:obj.pilus}
-      ];
-      return `
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-4">
-          <div class="bg-slate-800 px-4 py-2 text-[10px] font-bold text-white uppercase">${title}</div>
-          <div class="p-3 grid grid-cols-3 gap-2">
-            ${items.map(i => `<div class="bg-slate-50 p-2 rounded-xl border border-slate-100"><p class="text-[9px] text-slate-400 font-bold uppercase">${i.l}</p><p class="font-bold text-sm text-slate-800">${i.v || 0}</p></div>`).join('')}
-          </div>
-        </div>`;
-    }
-
-    function renderTempura(obj) {
-      const items = [{l:'1K', v:obj['1k']}, {l:'1.5K', v:obj['1_5k']}, {l:'2K', v:obj['2k']}, {l:'2.5K', v:obj['2_5k']}, {l:'3K', v:obj['3k']}, {l:'5K', v:obj['5k']}];
-      return `
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-          <div class="bg-slate-800 px-4 py-2 text-[10px] font-bold text-white uppercase">Tempura</div>
-          <div class="p-3 grid grid-cols-3 gap-2">
-            ${items.map(i => `<div class="bg-slate-50 p-2 rounded-xl border border-slate-100"><p class="text-[9px] text-slate-400 font-bold uppercase">${i.l}</p><p class="font-bold text-sm text-slate-800">${i.v || 0}</p></div>`).join('')}
-          </div>
-        </div>`;
-    }
-
-    window.onload = () => loadData(currentViewingDate);
+    loadData(currentViewingDate);
   </script>
 </body>
 </html>
